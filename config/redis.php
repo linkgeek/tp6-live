@@ -11,7 +11,7 @@ return [
     'host' => env('redis.host', '127.0.0.1'),
     'port' => env('redis.port', 6379),
     'auth' => env('redis.auth', ''),
-    'out_time' => 120,
+    'out_time' => 600, //验证码有效期s
     'time_out' => env('redis.time_out', 5), // 超时时间
     'live_game_key' => 'tp6_live_game_key'
 ];

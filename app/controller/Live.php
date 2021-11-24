@@ -6,6 +6,7 @@ use app\common\lib\Redis;
 use app\common\lib\redis\Predis;
 use app\common\lib\Util;
 use think\facade\Log;
+use think\facade\Config;
 
 class Live extends BaseController
 {
@@ -17,7 +18,7 @@ class Live extends BaseController
     {
         $phoneNum = intval($_REQUEST['phone_num']);
         if (empty($phoneNum)) {
-            return Util::show(config('code.error'), 'error');
+            return Util::show(Config::get('code.error'), 'error');
         }
 
         // 生成一个随机数
@@ -32,9 +33,9 @@ class Live extends BaseController
                 'code' => $code,
             ]
         ];
-        //$_POST['ws_server']->task($taskData);
+        $_POST['ws_server']->task($taskData);
 
-        return Util::show(config('code.success'), 'ok', ['code' => $code]);
+        return Util::show(Config::get('code.success'), 'ok', ['code' => $code]);
     }
 
     /**
@@ -46,9 +47,8 @@ class Live extends BaseController
         $phoneNum = intval($_REQUEST['phone_num']);
         $code = intval($_REQUEST['code']);
         if (empty($phoneNum) || empty($code)) {
-            return Util::show(config('code.error'), 'phone or code is error');
+            return Util::show(Config::get('code.error'), 'phone or code is error');
         }
-        debugLog($phoneNum . '_' . $code, 'login.log');
 
         // redis code
         $redisCode = 0;
@@ -57,6 +57,8 @@ class Live extends BaseController
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
+        debugLog($phoneNum . '_' . $code . '_' . $redisCode, 'login.log');
+
         // 判断验证码
         if ($redisCode == $code) {
             // 写入redis
@@ -68,8 +70,8 @@ class Live extends BaseController
             ];
             Predis::getInstance()->set(Redis::userkey($phoneNum), $data);
 
-            return Util::show(config('code.success'), 'ok', $data);
+            return Util::show(Config::get('code.success'), 'ok', $data);
         }
-        return Util::show(config('code.error'), 'login error');
+        return Util::show(Config::get('code.error'), 'login error');
     }
 }

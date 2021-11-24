@@ -9,7 +9,7 @@ namespace app\common\lib\task;
 use app\common\lib\ali\Sms;
 use app\common\lib\redis\Predis;
 use app\common\lib\Redis;
-use think\facade\Log;
+use think\facade\Config;
 
 class Task {
 
@@ -35,8 +35,9 @@ class Task {
         if ($response->Code !== "OK") {
             return false;
         }*/
+        //debugLog($data, 'debug.log');
 
-        Predis::getInstance()->set(Redis::smsKey($data['phone']), $data['code'], config('redis.out_time'));
+        Predis::getInstance()->set(Redis::smsKey($data['phone']), $data['code'], 600);
         return true;
     }
 
@@ -47,7 +48,7 @@ class Task {
      * @return bool
      */
     public function pushLive($data, $serv) {
-        $clients = Predis::getInstance()->sMembers(config("redis.live_game_key"));
+        $clients = Predis::getInstance()->sMembers(Config::get("redis.live_game_key"));
         foreach ($clients as $fd) {
             $serv->push($fd, json_encode($data));
         }
@@ -64,7 +65,7 @@ class Task {
         /*foreach ($_POST['ws_server']->ports[1]->connections as $fd) {
             $_POST['ws_server']->push($fd, json_encode($data));
         }*/
-        $clients = Predis::getInstance()->sMembers(config("redis.live_game_key") . '_chat');
+        $clients = Predis::getInstance()->sMembers(Config::get("redis.live_game_key") . '_chat');
         foreach ($clients as $fd) {
             $serv->push($fd, json_encode($data));
         }

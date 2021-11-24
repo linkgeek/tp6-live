@@ -29,9 +29,11 @@ class Predis {
 
     private function __construct() {
         $this->redis = new \Redis();
-        $redis_conf = Config::get('redis');
-        $result = $this->redis->connect($redis_conf['host'], $redis_conf['port'], $redis_conf['time_out']);
-        $this->redis->auth($redis_conf['auth']);
+        //$redis_conf = Config::get('redis');
+        //debugLog('redis-config: ' . json_encode($redis_conf), 'login.log');
+        //$result = $this->redis->connect($redis_conf['host'], $redis_conf['port'], $redis_conf['time_out']);
+        $result = $this->redis->connect('127.0.0.1', 6379, 3);
+        $this->redis->auth('$redis@0918');
         if ($result === false) {
             throw new \Exception('redis connect error');
         }

@@ -11,7 +11,8 @@ if (!function_exists('debugLog')) {
      */
     function debugLog($msg, $fileName = 'debug.log', $maxSize = 2)
     {
-        $filePath = LOG_PATH . $fileName;
+        //$filePath = LOG_PATH . $fileName;
+        $filePath = '/data/www/mooc/tp6-live/runtime/log/' . $fileName;
         $fileSize = file_exists($filePath) ? @filesize($filePath) : 0;
         $flag = $fileSize < max(1, $maxSize) * 1024 * 1024;
         $msgPrefix = '[' . date('Y-m-d H:i:s') . ']';

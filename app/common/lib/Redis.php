@@ -14,12 +14,13 @@ class Redis {
      * 验证码 redis key的前缀
      * @var string
      */
-    public static $pre = "sms_";
+    public static $pre = "sms2_";
+
     /**
      * 用户user pre
      * @var string
      */
-    public static $userpre = "user_";
+    public static $userpre = "user2_";
 
     /**
      * 存储验证码 redis key
