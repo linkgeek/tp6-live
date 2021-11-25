@@ -9,17 +9,17 @@ namespace app\common\lib\task;
 use app\common\lib\ali\Sms;
 use app\common\lib\redis\Predis;
 use app\common\lib\Redis;
-use think\facade\Config;
 
 class Task {
 
     /**
-     * 异步发送 验证码
+     * 发送验证码
      * @param $data
      * @param $serv
      * @return bool
      */
     public function sendSms($data, $serv) {
+        // 暂时没有开通短信业务
         /*try {
             //发送短信
             $sms = new Sms();
@@ -48,7 +48,7 @@ class Task {
      * @return bool
      */
     public function pushLive($data, $serv) {
-        $clients = Predis::getInstance()->sMembers(Config::get("redis.live_game_key"));
+        $clients = Predis::getInstance()->sMembers('live_game_connect_fd');
         foreach ($clients as $fd) {
             $serv->push($fd, json_encode($data));
         }
@@ -62,10 +62,7 @@ class Task {
      * @return bool
      */
     public function pushChat($data, $serv) {
-        /*foreach ($_POST['ws_server']->ports[1]->connections as $fd) {
-            $_POST['ws_server']->push($fd, json_encode($data));
-        }*/
-        $clients = Predis::getInstance()->sMembers(Config::get("redis.live_game_key") . '_chat');
+        $clients = Predis::getInstance()->sMembers('live_game_connect_fd');
         foreach ($clients as $fd) {
             $serv->push($fd, json_encode($data));
         }

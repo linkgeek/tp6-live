@@ -7,7 +7,7 @@ date_default_timezone_set('Asia/Shanghai');
  */
 class Server {
 
-    const PORT = 4076;
+    const PORT = 4074;
 
     public function port() {
         $shell = "netstat -anp 2>/dev/null | grep " . self::PORT . " | grep LISTEN | wc -l";
@@ -16,7 +16,7 @@ class Server {
             // 发送报警服务 邮件 短信
             /// todo
             echo date("Ymd H:i:s") . "|port-error" . PHP_EOL;
-            $flag = shell_exec('sh /data/www/pro/tp5-live/script/bin/server/reload.sh');
+            $flag = shell_exec('sh /data/www/mooc/tp6-live/script/server/reload.sh');
             echo date("Ymd H:i:s") . "|port-reload: " . $flag . PHP_EOL;
         } else {
             echo date("Ymd H:i:s") . "|port-success" . PHP_EOL;
@@ -24,7 +24,7 @@ class Server {
     }
 }
 
-// nohup /usr/local/php7/bin/php /data/www/pro/tp5-live/script/monitor/server.php > /data/www/pro/tp5-live/runtime/log/ws.monitor.log &
+// nohup /usr/local/php7/bin/php /data/www/mooc/tp6-live/script/monitor/server.php > /data/www/mooc/tp6-live/runtime/log/ws.monitor.log &
 // ps aux|grep monitor/server.php
 swoole_timer_tick(1000, function ($timer_id) {
     (new Server())->port();

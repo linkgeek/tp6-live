@@ -13,12 +13,14 @@ return [
             // 磁盘类型
             'type'       => 'local',
             // 磁盘路径
-            'root'       => app()->getRootPath() . 'public/storage',
+            'root'       => app()->getRootPath() . 'public/static',
             // 磁盘路径对应的外部URL路径
-            'url'        => '/storage',
+            'url'        => '',
             // 可见性
             'visibility' => 'public',
         ],
         // 更多的磁盘配置信息
     ],
+    'image_rule' => 'fileExt:jpg,jpeg,png,gif|fileMime:image/jpeg,image/gif,image/png',
+    'image_max_size' => 2097152,
 ];

@@ -1,33 +1,24 @@
 <?php
 
-use think\facade\Config;
-
 /**
+ * WebSocket服务
  * Class Ws
  */
-class Ws
-{
+class Ws {
     CONST HOST = "0.0.0.0";
-    CONST PORT = 4074; //赛况
-    CONST CHAT_PORT = 4075; //聊天室
+    CONST PORT = 4074;
 
     public $ws = null;
+    private $redis_key_fd = 'live_game_connect_fd'; //缓存客户端连接
 
-    public function __construct()
-    {
-        //$this->ws = new swoole_websocket_server(self::HOST, self::PORT);
+    public function __construct() {
         $this->ws = new Swoole\WebSocket\Server(self::HOST, self::PORT);
-        // 多端口监听
-        $this->ws->listen(self::HOST, self::CHAT_PORT, SWOOLE_SOCK_TCP);
-
         $this->ws->set(
             [
                 'enable_static_handler' => true,
-                //'document_root' => __DIR__.'/../public/static',
-                //'document_root' => public_path('static'),
-                'document_root' => "/data/www/mooc/tp6-live/public/static",
-                'worker_num' => 1, //cpu核数1-4倍
-                'task_worker_num' => 2, //设置异步任务的工作进程数量，
+                'document_root'         => __DIR__ . '/../../public/static',
+                'worker_num'            => 1, //cpu核数1-4倍
+                'task_worker_num'       => 2, //设置异步任务的工作进程数量，
             ]
         );
 
@@ -46,8 +37,7 @@ class Ws
     /**
      * @param $server
      */
-    public function onStart($server)
-    {
+    public function onStart($server) {
         echo '[' . date('Y-m-d H:i:s') . ']onStart' . "\n";
         // 设置主进程别名
         swoole_set_process_name("tp6_live_master");
@@ -57,21 +47,18 @@ class Ws
      * @param $server
      * @param $worker_id
      */
-    public function onWorkerStart($server, $worker_id)
-    {
+    public function onWorkerStart($server, $worker_id) {
         echo '[' . date('Y-m-d H:i:s') . ']onWorkerStart' . "\n";
 
         // 定义应用目录
         define('APP_PATH', __DIR__ . '/../../app/');
         define('LOG_PATH', __DIR__ . '/../../runtime/log/');
 
-        // tp6.0采用composer安装，没有了tp5.0中的base.php，所以这里需要加载自动加载文件
+        // 引入自动加载文件
         require __DIR__ . '/../../vendor/autoload.php';
 
-        // 获取 key 有值 del
-        //$redis_key = Config::get('redis.tp6_live_game_key');
-        //app\common\lib\redis\Predis::getInstance()->del($redis_key);
-        //app\common\lib\redis\Predis::getInstance()->del($redis_key . '_chat');
+        // 重启服务时，获取 key 有值 del
+        app\common\lib\redis\Predis::getInstance()->del($this->redis_key_fd);
     }
 
     /**
@@ -79,15 +66,9 @@ class Ws
      * @param $ws
      * @param $request
      */
-    public function onOpen($ws, $request)
-    {
+    public function onOpen($ws, $request) {
         echo '[' . date('Y-m-d H:i:s') . ']' . "onOpen-fd: {$request->fd}\n";
-        // fd redis [1, 2]
-        $get = $request->get;
-        $type = $get['type'] ? '_' . $get['type'] : '';
-        app\common\lib\redis\Predis::getInstance()->sAdd(Config::get('redis.tp6_live_game_key') . $type, $request->fd);
-
-        //$ws->push($request->fd, "hello, welcome: " . $request->fd);
+        app\common\lib\redis\Predis::getInstance()->sAdd($this->redis_key_fd, $request->fd);
     }
 
     /**
@@ -95,8 +76,7 @@ class Ws
      * @param $request
      * @param $response
      */
-    public function onRequest($request, $response)
-    {
+    public function onRequest($request, $response) {
         echo '[' . date('Y-m-d H:i:s') . ']onRequest' . "\n";
         if ($request->server['request_uri'] == '/favicon.ico') {
             $response->status(404);
@@ -117,11 +97,9 @@ class Ws
         }
 
         $_GET = [];
-        $_REQUEST = [];
         if (isset($request->get)) {
             foreach ($request->get as $k => $v) {
                 $_GET[$k] = $v;
-                $_REQUEST[$k] = $v;
             }
         }
         $_FILES = [];
@@ -134,36 +112,32 @@ class Ws
         if (isset($request->post)) {
             foreach ($request->post as $k => $v) {
                 $_POST[$k] = $v;
-                $_REQUEST[$k] = $v;
             }
         }
 
         // 记录请求日志
-        //$this->writeLog();
+        // $this->writeLog();
 
         // 传递Swoole server服务对象
         $_POST['ws_server'] = $this->ws;
+        //print_r($_POST);
 
+        // 开启缓冲区
         ob_start();
 
         // 执行应用并响应
         try {
-            // 执行HTTP应用并响应
             $tp_http = (new \think\App())->http;
             $tp_response = $tp_http->run();
             $tp_response->send();
-            //$tp_http->end($tp_response);
         } catch (\Exception $e) {
             // todo
             echo $e->getMessage();
         }
 
-        // 输出TP当前请求的控制方法
-        //echo "-action-" . request()->action() . PHP_EOL;
-
         //获取缓冲区内容
         $res = ob_get_contents();
-        //ob_end_clean();
+        ob_end_clean();
         $response->end($res);
     }
 
@@ -172,8 +146,7 @@ class Ws
      * @param $ws
      * @param $frame
      */
-    public function onMessage($ws, $frame)
-    {
+    public function onMessage($ws, $frame) {
         echo '[' . date('Y-m-d H:i:s') . ']' . "onMessage - data: {$frame->data}\n";
         $ws->push($frame->fd, "server - push: " . date("Y - m - d H:i:s"));
     }
@@ -186,8 +159,7 @@ class Ws
      * @param $data
      * @return
      */
-    public function onTask($serv, $taskId, $workerId, $data)
-    {
+    public function onTask($serv, $taskId, $workerId, $data) {
         echo '[' . date('Y-m-d H:i:s') . ']' . "onTask-start: " . json_encode($data) . PHP_EOL;
         // 分发 task 任务机制，让不同的任务 走不同的逻辑
         $obj = new app\common\lib\task\Task;
@@ -206,8 +178,7 @@ class Ws
      * @param $taskId
      * @param $data
      */
-    public function onFinish($serv, $taskId, $data)
-    {
+    public function onFinish($serv, $taskId, $data) {
         echo '[' . date('Y-m-d H:i:s') . ']' . "onFinish - {$taskId}: {$data}" . PHP_EOL;
     }
 
@@ -216,19 +187,15 @@ class Ws
      * @param $ws
      * @param $fd
      */
-    public function onClose($ws, $fd)
-    {
-        $redis_key = Config::get('redis.tp6_live_game_key');
-        app\common\lib\redis\Predis::getInstance()->sRem($redis_key, $fd);
-        app\common\lib\redis\Predis::getInstance()->sRem($redis_key . '_chat', $fd);
+    public function onClose($ws, $fd) {
+        app\common\lib\redis\Predis::getInstance()->sRem($this->redis_key_fd, $fd);
         echo '[' . date('Y-m-d H:i:s') . ']' . "onClose - fd: {$fd}\n";
     }
 
     /**
      * 记录日志
      */
-    public function writeLog()
-    {
+    public function writeLog() {
         $data = array_merge(['date' => date("Ymd H:i:s")], $_GET, $_POST, $_SERVER);
         $logs = "";
         foreach ($data as $key => $value) {
@@ -240,6 +207,6 @@ class Ws
     }
 }
 
-// 平滑重启服务：sh /data/www/pro/tp5-live/script/bin/server/reload.sh
-// nohup /usr/local/php7/bin/php /data/www/pro/tp5-live/script/bin/server/ws.php > /data/www/pro/tp5-live/runtime/log/ws.log &
+// 平滑重启服务：sh /data/www/mooc/tp6-live/script/server/reload.sh
+// 守护进程化：nohup /usr/local/php7/bin/php /data/www/mooc/tp6-live/script/server/ws.php > /data/www/mooc/tp6-live/runtime/log/ws.log &
 new Ws();

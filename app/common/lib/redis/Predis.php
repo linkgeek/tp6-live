@@ -1,14 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: baidu
- * Date: 18/3/26
- * Time: 上午3:52
- */
 
 namespace app\common\lib\redis;
-
-use think\facade\Config;
 
 class Predis {
 
@@ -29,9 +21,6 @@ class Predis {
 
     private function __construct() {
         $this->redis = new \Redis();
-        //$redis_conf = Config::get('redis');
-        //debugLog('redis-config: ' . json_encode($redis_conf), 'login.log');
-        //$result = $this->redis->connect($redis_conf['host'], $redis_conf['port'], $redis_conf['time_out']);
         $result = $this->redis->connect('127.0.0.1', 6379, 3);
         $this->redis->auth('$redis@0918');
         if ($result === false) {
@@ -80,14 +69,6 @@ class Predis {
 
         return $this->redis->del($key);
     }
-
-    /*public function sAdd($key, $val) {
-        return $this->redis->sAdd($key, $val);
-    }
-
-    public function sRem($key, $val) {
-        return $this->redis->sRem($key, $val);
-    }*/
 
     /**
      * @param $key
