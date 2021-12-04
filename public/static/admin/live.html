@@ -95,10 +95,10 @@
         auto: true,
 
         // swf文件路径
-        swf: 'http://120.25.227.106:4074/webuploader/Uploader.swf',
+        swf: 'http://120.25.227.106:8089/webuploader/Uploader.swf',
 
         // 文件接收服务端。
-        server: 'http://120.25.227.106:4074/admin/upload',
+        server: 'http://120.25.227.106:8089/admin/upload',
 
         // 选择文件的按钮。可选。
         // 内部根据当前运行是创建，可能是input元素，也可能是flash.
@@ -189,7 +189,7 @@
         var img = $("input[name=image]").val();
         console.log(formData);
         // TODO: 请求后台接口跳转界面，前端跳转或者后台跳
-        $.post("http://120.25.227.106:4074/admin/push", {type: type, team_id: team_id, content: content, image: img}, function (data) {
+        $.post("http://120.25.227.106:8089/admin/push", {type: type, team_id: team_id, content: content, image: img}, function (data) {
             if (data.status == 1) {
                 alert(data.message);
             }

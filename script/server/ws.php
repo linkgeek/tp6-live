@@ -1,12 +1,12 @@
 <?php
-
+//echo 123;die;
 /**
  * WebSocket服务
  * Class Ws
  */
 class Ws {
     CONST HOST = "0.0.0.0";
-    CONST PORT = 4074;
+    CONST PORT = 8089;
 
     public $ws = null;
     private $redis_key_fd = 'live_game_connect_fd'; //缓存客户端连接
@@ -17,7 +17,7 @@ class Ws {
             [
                 'enable_static_handler' => true,
                 'document_root'         => __DIR__ . '/../../public/static',
-                'worker_num'            => 1, //cpu核数1-4倍
+                'worker_num'            => 2, //cpu核数1-4倍
                 'task_worker_num'       => 2, //设置异步任务的工作进程数量，
             ]
         );
@@ -40,7 +40,7 @@ class Ws {
     public function onStart($server) {
         echo '[' . date('Y-m-d H:i:s') . ']onStart' . "\n";
         // 设置主进程别名
-        swoole_set_process_name("tp6_live_master");
+        swoole_set_process_name("sports_live_master");
     }
 
     /**
@@ -48,7 +48,8 @@ class Ws {
      * @param $worker_id
      */
     public function onWorkerStart($server, $worker_id) {
-        echo '[' . date('Y-m-d H:i:s') . ']onWorkerStart' . "\n";
+        // $worker_id: < worker_num 为worker进程，>= worker_num 为task进程
+        echo '[' . date('Y-m-d H:i:s') . ']onWorkerStart：' . "{$worker_id}\n";
 
         // 定义应用目录
         define('APP_PATH', __DIR__ . '/../../app/');
@@ -207,6 +208,6 @@ class Ws {
     }
 }
 
-// 平滑重启服务：sh /data/www/mooc/tp6-live/script/server/reload.sh
-// 守护进程化：nohup /usr/local/php7/bin/php /data/www/mooc/tp6-live/script/server/ws.php > /data/www/mooc/tp6-live/runtime/log/ws.log &
+// 平滑重启服务：sh /data/www/pro/tp6-live/script/server/reload.sh
+// 守护进程化：nohup /usr/local/php7/bin/php /data/www/pro/tp6-live/script/server/ws.php > /data/www/pro/tp6-live/runtime/log/ws.log &
 new Ws();

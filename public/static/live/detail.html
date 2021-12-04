@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>NBA图文直播室</title>
+    <title>赛事图文直播室</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta content="yes" name="apple-mobile-web-app-capable"/>
     <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
@@ -493,7 +493,7 @@
 
         // 获取赛况列表
         function getOuts() {
-            var url = "http://120.25.227.106:4074/live/getOuts";
+            var url = "http://120.25.227.106:8089/live/getOuts";
             $.post(url, {'game_id': 1}, function (res) {
                 if (res.status === 1) {
                     $.each(res.data, function (index, value) {
@@ -507,7 +507,7 @@
 
         // 获取聊天室列表
         function getChat() {
-            var url = "http://120.25.227.106:4074/live/getChat";
+            var url = "http://120.25.227.106:8089/live/getChat";
             $.post(url, {'game_id': 1}, function (res) {
                 if (res.status === 1) {
                     $.each(res.data, function (index, value) {
@@ -523,7 +523,7 @@
         $("#chat-input").keydown(function (e) {
             if (e.keyCode === 13) {
                 var txt = $(this).val();
-                var url = "http://120.25.227.106:4074/live/chat";
+                var url = "http://120.25.227.106:8089/live/chat";
                 var data = {'game_id': 1, 'content': txt};
                 $.post(url, data, function (res) {
                     if (res.status === 1) {
