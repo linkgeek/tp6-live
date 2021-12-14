@@ -7,7 +7,7 @@ date_default_timezone_set('Asia/Shanghai');
  */
 class Server {
 
-    const PORT = 4074;
+    const PORT = 8089;
 
     public function port() {
         $shell = "netstat -anp 2>/dev/null | grep " . self::PORT . " | grep LISTEN | wc -l";

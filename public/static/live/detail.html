@@ -322,7 +322,7 @@
                 <div class="frame-item">
                     <span class="frame-dot"></span>
                     <div class="frame-item-author">
-                        singwa(评论员)
+                        直播员
                     </div>
                     <p>01:44 </p>
                     <p>01:46 犯规 个人犯规 Ruan</p>
@@ -345,7 +345,7 @@
                 <div class="frame-item">
                     <span class="frame-dot"></span>
                     <div class="frame-item-author">
-                        singwa(评论员)
+                        直播员
                     </div>
                     <p>08:44:41 火箭队请求暂停 常规暂停</p>
                     <p>08:44:40 哈登进攻犯规 个人犯规3次</p>
@@ -360,7 +360,7 @@
                 <span>赞~</span>
             </div>
             <div class="comment">
-                <span>singwa：</span>
+                <span>用户7386650443：</span>
                 <span>必定能夺冠，加油火箭！</span>
             </div>
             <div class="comment">
@@ -368,7 +368,7 @@
                 <span>詹姆斯去火箭吧~</span>
             </div>
             <div class="comment">
-                <span>singwa2：</span>
+                <span>sa流星雨：</span>
                 <span>这场比赛太精彩了</span>
             </div>
             <div class="comment-form">
@@ -493,7 +493,7 @@
 
         // 获取赛况列表
         function getOuts() {
-            var url = "http://120.25.227.106:4074/live/getOuts";
+            var url = "http://120.25.227.106:8088/live/getOuts";
             $.post(url, {'game_id': 1}, function (res) {
                 if (res.status === 1) {
                     $.each(res.data, function (index, value) {
@@ -507,7 +507,7 @@
 
         // 获取聊天室列表
         function getChat() {
-            var url = "http://120.25.227.106:4074/live/getChat";
+            var url = "http://120.25.227.106:8088/live/getChat";
             $.post(url, {'game_id': 1}, function (res) {
                 if (res.status === 1) {
                     $.each(res.data, function (index, value) {
@@ -523,7 +523,7 @@
         $("#chat-input").keydown(function (e) {
             if (e.keyCode === 13) {
                 var txt = $(this).val();
-                var url = "http://120.25.227.106:4074/live/chat";
+                var url = "http://120.25.227.106:8088/live/chat";
                 var data = {'game_id': 1, 'content': txt};
                 $.post(url, data, function (res) {
                     if (res.status === 1) {

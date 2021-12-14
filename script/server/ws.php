@@ -6,7 +6,7 @@
  */
 class Ws {
     CONST HOST = "0.0.0.0";
-    CONST PORT = 4074;
+    CONST PORT = 8088;
 
     public $ws = null;
     private $redis_key_fd = 'live_game_connect_fd'; //缓存客户端连接
@@ -83,6 +83,9 @@ class Ws {
             $response->end();
             return;
         }
+
+        //允许跨域访问
+        $response->header('Access-Control-Allow-Origin', '*');
 
         //$_SERVER = [];
         if (isset($request->server)) {

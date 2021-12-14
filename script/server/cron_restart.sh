@@ -1,6 +1,6 @@
 #!/bin/bash
 count=`ps -fe |grep "tp6_live_master" | grep -v "grep" | wc -l`
-#count=`netstat -ln | grep 4074| wc -l`
+#count=`netstat -ln | grep 8088| wc -l`
 echo $count
 if [ $count -lt 1 ]; then
 ps -eaf |grep "tp6_live_master" | grep -v "grep"| awk '{print $2}'|xargs kill -9

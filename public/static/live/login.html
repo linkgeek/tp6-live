@@ -98,7 +98,7 @@
         // 获取验证吗
         $('#authCodeBtn').click(function (event) {
             var phone_num = $("input[name='phone_num']").val();
-            url = "http://120.25.227.106:4074/login/send";
+            url = "http://120.25.227.106:8088/login/send";
             $(this).html('已发送').attr('disabled', true);
             $.post(url, {'phone_num': phone_num}, function (res) {
                 // TODO: 将下面3行代码删除
@@ -115,10 +115,10 @@
             var phone = $('.phone-num').val();
             var code = $('.code-num').val();
             // TODO: 请求后台接口跳转界面，前端跳转或者后台跳
-            $.post("http://120.25.227.106:4074/login/login", {phone_num: phone, code: code}, function (res) {
+            $.post("http://120.25.227.106:8088/login/login", {phone_num: phone, code: code}, function (res) {
                 if (res.status === 1) {
                     alert('登录成功');
-                    window.location.href = 'http://120.25.227.106:4074/live/detail.html';
+                    window.location.href = 'http://120.25.227.106:8088/live/detail.html';
                 }
             }, 'json');
         });

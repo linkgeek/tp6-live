@@ -1,4 +1,4 @@
-var wsUrl = "ws://120.25.227.106:4074";
+var wsUrl = "ws://120.25.227.106:8088";
 
 var websocket = new WebSocket(wsUrl);
 

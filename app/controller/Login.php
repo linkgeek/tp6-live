@@ -10,7 +10,6 @@ use think\facade\Config;
 
 class Login extends BaseController
 {
-
     /**
      * 发送验证码
      */
