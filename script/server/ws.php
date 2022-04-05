@@ -1,5 +1,5 @@
 <?php
-//echo 123;die;
+
 /**
  * WebSocket服务
  * Class Ws
@@ -208,6 +208,6 @@ class Ws {
     }
 }
 
-// 平滑重启服务：sh /data/www/pro/tp6-live/script/server/reload.sh
-// 守护进程化：nohup /usr/local/php7/bin/php /data/www/pro/tp6-live/script/server/ws.php > /data/www/pro/tp6-live/runtime/log/ws.log &
+// 平滑重启服务：sh /data/www/mooc/tp6-live/script/server/reload.sh
+// 守护进程化：nohup /usr/local/php7/bin/php /data/www/mooc/tp6-live/script/server/ws.php > /data/www/mooc/tp6-live/runtime/log/ws.log &
 new Ws();
