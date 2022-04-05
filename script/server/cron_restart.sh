@@ -1,9 +1,9 @@
 #!/bin/bash
-count=`ps -fe |grep "sports_live_master" | grep -v "grep" | wc -l`
-#count=`netstat -ln | grep 8089| wc -l`
+count=`ps -fe |grep "tp6_live_master" | grep -v "grep" | wc -l`
+#count=`netstat -ln | grep 8088| wc -l`
 echo $count
 if [ $count -lt 1 ]; then
-ps -eaf |grep "sports_live_master" | grep -v "grep"| awk '{print $2}'|xargs kill -9
+ps -eaf |grep "tp6_live_master" | grep -v "grep"| awk '{print $2}'|xargs kill -9
 sleep 2
 
 # /usr/local/php7/bin/php /data/www/shoxot-api/mqtt/socket.php

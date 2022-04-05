@@ -6,7 +6,7 @@
  */
 class Ws {
     CONST HOST = "0.0.0.0";
-    CONST PORT = 8089;
+    CONST PORT = 8088;
 
     public $ws = null;
     private $redis_key_fd = 'live_game_connect_fd'; //缓存客户端连接
@@ -17,7 +17,7 @@ class Ws {
             [
                 'enable_static_handler' => true,
                 'document_root'         => __DIR__ . '/../../public/static',
-                'worker_num'            => 2, //cpu核数1-4倍
+                'worker_num'            => 1, //cpu核数1-4倍
                 'task_worker_num'       => 2, //设置异步任务的工作进程数量，
             ]
         );
@@ -40,7 +40,7 @@ class Ws {
     public function onStart($server) {
         echo '[' . date('Y-m-d H:i:s') . ']onStart' . "\n";
         // 设置主进程别名
-        swoole_set_process_name("sports_live_master");
+        swoole_set_process_name("tp6_live_master");
     }
 
     /**
@@ -48,8 +48,7 @@ class Ws {
      * @param $worker_id
      */
     public function onWorkerStart($server, $worker_id) {
-        // $worker_id: < worker_num 为worker进程，>= worker_num 为task进程
-        echo '[' . date('Y-m-d H:i:s') . ']onWorkerStart：' . "{$worker_id}\n";
+        echo '[' . date('Y-m-d H:i:s') . ']onWorkerStart' . "\n";
 
         // 定义应用目录
         define('APP_PATH', __DIR__ . '/../../app/');
@@ -84,6 +83,9 @@ class Ws {
             $response->end();
             return;
         }
+
+        //允许跨域访问
+        $response->header('Access-Control-Allow-Origin', '*');
 
         //$_SERVER = [];
         if (isset($request->server)) {
